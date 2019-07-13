@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import unsplash from "./unsplash";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            // set imgs to empty array
+            imgs: []
+        };
+    }
+    componentDidMount() {
+        fetch(
+            "https://api.unsplash.com/photos/?client_id=" +
+                unsplash.applicationId
+        )
+            // turn response to json
+            .then(res => res.json())
+            .then(data => {
+                // set data to imgs array
+                this.setState({ imgs: data });
+                console.log(data);
+            })
+            .catch(err => {
+                console.log("error happened during fetching");
+            });
+    }
+
+    render() {
+        // access imgs from state
+        const result = this.state.imgs;
+        // loop over all imgs and display them
+        let imgs = result.map(img => (
+            <img src={img.urls.small} key={img.id} alt={img.alt_description} />
+        ));
+        return (
+            <div>
+                <ul>{imgs}</ul>
+                {/* <ImgList data={this.state.imgs} alt="" /> */}
+            </div>
+        );
+    }
 }
-
-export default App;
